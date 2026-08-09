@@ -63,5 +63,48 @@ async def add(
         f"Added ₹{amount} as {'gained' if gained else 'spent'}"
     )
 
+
+@cli.command()
+def balance():
+    data = load_data()
+
+    budget = int(
+        data['budget']
+    )
+
+    spent = sum(
+        int(
+            trnsct['amount']
+        ) for trnsct in data['transactions'] if trnsct['type'] == 'spent'
+    )
+
+    gained = sum(
+        int(
+            trnsct['amount']
+        ) for trnsct in data['transactions'] if trnsct['type'] == 'gained'
+    )
+
+    current_blnc = budget + gained - spent
+    console.print(
+        f"""
+        BALANCE SUMMARY AT {time.strftime('%d/%m/%Y')}:
+        Budget: {budget}
+        Spent: {spent} [red]--[/]
+        Gained: {gained} [green]++[/]
+        Current Balance: {current_blnc}
+        """
+    )
+
+
+@cli.command()
+def refresh():
+    data = load_data()
+    data['budget'] = 0
+    data['transactions'] = []
+
+    save_data(data=data)
+    console.print('[green]Refreshed Done!![/]')
+
+
 if __name__ == "__main__":
     asyncio.run(cli())
