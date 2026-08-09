@@ -1,5 +1,5 @@
 """"Import Required Dependencies"""
-from storage import (
+from .storage import (
     load_data,
     save_data
 )
