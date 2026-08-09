@@ -21,8 +21,7 @@ async def cli():
     'budget',
     required=True,
 )
-async def setby
-(
+async def setby(
         budget: int | None
 ):
     data = load_data()
