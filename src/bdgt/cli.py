@@ -7,6 +7,7 @@ import asyncio
 import time
 import asyncclick as click
 from rich.console import Console
+from rich.table import Table
 
 console = Console()
 
@@ -65,7 +66,7 @@ async def add(
 
 
 @cli.command()
-def balance():
+async def balance():
     data = load_data()
 
     budget = int(
@@ -97,13 +98,42 @@ def balance():
 
 
 @cli.command()
-def refresh():
+async def refresh():
     data = load_data()
     data['budget'] = 0
     data['transactions'] = []
 
     save_data(data=data)
     console.print('[green]Refreshed Done!![/]')
+
+
+@cli.command(name='list')
+async def list():
+    data = load_data()
+    table = Table(title='Transactions')
+
+    table.add_column('Sl')
+    table.add_column('Date')
+    table.add_column('Purpose')
+    table.add_column('Amount')
+    table.add_column('Type')
+
+    for idx, db in enumerate(data['transactions'], start=1):
+        table.add_row(
+            str(idx),
+            db['date'],
+            db['purpose'],
+            db['amount'],
+            db['type']
+        )
+
+    console.print(table)
+    total_spent = sum(
+        trnsct['amount'] for trnsct in data['transactions'] if trnsct['type'] == 'spent'
+    )
+    console.print()
+    console.print(f"[yellow]Budget:[/] {data['budget']}")
+    console.print(f"[yellow]Total Spent:[/] {total_spent}")
 
 
 if __name__ == "__main__":
