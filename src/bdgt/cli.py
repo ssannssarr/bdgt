@@ -129,12 +129,24 @@ async def list():
 
     console.print(table)
     total_spent = sum(
-        trnsct['amount'] for trnsct in data['transactions'] if trnsct['type'] == 'spent'
+        int(
+            trnsct['amount']
+        ) for trnsct in data['transactions'] if trnsct['type'] == 'spent'
     )
-    console.print()
-    console.print(f"[yellow]Budget:[/] {data['budget']}")
-    console.print(f"[yellow]Total Spent:[/] {total_spent}")
+    total_gained = sum(
+        int(
+            trnsct['amount']
+        ) for trnsct in data['transactions'] if trnsct['type'] == 'gained'
+    )
+    budget = int(
+        data['budget']
+    )
 
+    console.print()
+    console.print(f"[yellow]Budget:[/] {budget}")
+    console.print(f"[yellow]Total Spent:[/] {total_spent}")
+    console.print(
+        f"[yellow]Current Budget:[/] {(budget + total_gained) - total_spent}")
 
 if __name__ == "__main__":
     asyncio.run(cli())
